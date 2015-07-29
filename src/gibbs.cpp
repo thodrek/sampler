@@ -237,7 +237,7 @@ void em(dd::CmdParser & cmd_parser){
     int numa_aware_n_epoch;
     int numa_aware_n_learning_epoch;
 
-    int maxIterCount = 2;
+    int maxIterCount = 10;
 
     while (!expMax.hasConverged && maxIterCount > 0) {
 
