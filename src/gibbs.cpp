@@ -181,6 +181,7 @@ void em(dd::CmdParser & cmd_parser){
     bool is_quiet = cmd_parser.quiet->getValue();
     bool sample_evidence = cmd_parser.sample_evidence->getValue();
     int burn_in = cmd_parser.burn_in->getValue();
+    int n_iter = cmd_parser.n_iter->getValue();
     bool learn_non_evidence = cmd_parser.learn_non_evidence->getValue();
 
     Meta meta = read_meta(fg_file);
@@ -237,9 +238,7 @@ void em(dd::CmdParser & cmd_parser){
     int numa_aware_n_epoch;
     int numa_aware_n_learning_epoch;
 
-    int maxIterCount = 10;
-
-    while (!expMax.hasConverged && maxIterCount > 0) {
+    while (!expMax.hasConverged && n_iter > 0) {
 
         // Expectation step
         numa_aware_n_epoch = (int)(n_inference_epoch/n_numa_node) +
@@ -254,7 +253,7 @@ void em(dd::CmdParser & cmd_parser){
                             stepsize, decay, reg_param, is_quiet);
 
         //Decrement iteration counter
-        maxIterCount--;
+        n_iter--;
     }
 
 }

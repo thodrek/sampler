@@ -33,6 +33,7 @@ namespace dd{
         learn_non_evidence = new TCLAP::SwitchArg("", "learn_non_evidence", "sample non-evidence variables in learning", false);
 
         burn_in = new TCLAP::ValueArg<int>("", "burn_in", "Burn-in period", false, 0, "int");
+        n_iter = new TCLAP::ValueArg<int>("n", "n_iter", "EM Iterations", false, 100, "int");
 
         cmd->add(*fg_file);
         
@@ -56,6 +57,7 @@ namespace dd{
         cmd->add(*quiet);
 
         cmd->add(*burn_in);
+        cmd->add(*n_iter);
         cmd->add(*sample_evidence);
         cmd->add(*learn_non_evidence);
       }else{

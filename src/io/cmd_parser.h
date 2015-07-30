@@ -44,6 +44,9 @@ namespace dd{
     TCLAP::SwitchArg * sample_evidence;
     TCLAP::SwitchArg * learn_non_evidence;
 
+    // EM arguments
+    TCLAP::ValueArg<int> * n_iter;
+
     TCLAP::CmdLine * cmd;
 
     CmdParser(std::string _app_name);
