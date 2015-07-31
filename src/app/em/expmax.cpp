@@ -97,15 +97,6 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
         Variable & variable = this->p_fg->variables[t];
         if (variable.is_evid) {
             if(variable.domain_type == DTYPE_BOOLEAN){
-                std::cout<<"Boolean"<<std::endl;
-            }
-            else if (variable.domain_type == DTYPE_REAL){
-                std::cout<<"Real"<<std::endl;
-            }
-            else {
-                std::cout<<"Multinomial"<<std::endl;
-            }
-            if(variable.domain_type == DTYPE_BOOLEAN){
 
                 //compute conditional probability of variable
                 potential_pos = p_fg->template potential<false>(variable, 1);
@@ -118,6 +109,15 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
 
                 neg_ps_ll += log(obs_inv_cond_prob);
             }else{
+                if(variable.domain_type == DTYPE_BOOLEAN){
+                    std::cerr<<"Boolean"<<std::endl;
+                }
+                else if (variable.domain_type == DTYPE_REAL){
+                    std::cerr<<"Real"<<std::endl;
+                }
+                else {
+                    std::cerr<<"Multinomial"<<std::endl;
+                }
                 std::cerr << "[ERROR] Only Boolean variables are supported now!" << std::endl;
                 assert(false);
                 return;
