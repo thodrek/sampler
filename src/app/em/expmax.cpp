@@ -3,10 +3,6 @@
 #include "dstruct/factor_graph/weight.h"
 #include "dstruct/factor_graph/inference_result.h"
 #include "common.h"
-#include "expmax.h"
-#include "../../dstruct/factor_graph/variable.h"
-#include "../../dstruct/factor_graph/factor_graph.h"
-#include "../../dstruct/factor_graph/inference_result.h"
 
 
 dd::ExpMax::ExpMax(FactorGraph * const _p_fg, CmdParser * const _p_cmd_parser, GibbsSampling * const _gibbs, double _threshold)
