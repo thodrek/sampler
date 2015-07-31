@@ -95,24 +95,33 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
     neg_ps_ll = 0.0;
     for (long t=0; this->p_fg->n_var; t++) {
         Variable & variable = this->p_fg->variables[t];
-        if (!variable.is_evid)
-            continue;
-        if(variable.domain_type == DTYPE_BOOLEAN){
+        if (variable.is_evid) {
+            if(variable.domain_type == DTYPE_BOOLEAN){
+                std::cout<<"Boolean"<<std::endl;
+            }
+            else if (variable.domain_type == DTYPE_REAL){
+                std::cout<<"Real"<<std::endl;
+            }
+            else {
+                std::cout<<"Multinomial"<<std::endl;
+            }
+            if(variable.domain_type == DTYPE_BOOLEAN){
 
-            //compute conditional probability of variable
-            potential_pos = p_fg->template potential<false>(variable, 1);
-            potential_neg = p_fg->template potential<false>(variable, 0);
+                //compute conditional probability of variable
+                potential_pos = p_fg->template potential<false>(variable, 1);
+                potential_neg = p_fg->template potential<false>(variable, 0);
 
-            if(p_fg->infrs->assignments_evid[t] == 1)
-                obs_inv_cond_prob = 1.0 + exp(potential_neg - potential_pos);
-            else
-                obs_inv_cond_prob = 1.0 + exp(potential_pos - potential_neg);
+                if(p_fg->infrs->assignments_evid[t] == 1)
+                    obs_inv_cond_prob = 1.0 + exp(potential_neg - potential_pos);
+                else
+                    obs_inv_cond_prob = 1.0 + exp(potential_pos - potential_neg);
 
-            neg_ps_ll += log(obs_inv_cond_prob);
-        }else{
-            std::cerr << "[ERROR] Only Boolean variables are supported now!" << std::endl;
-            assert(false);
-            return;
+                neg_ps_ll += log(obs_inv_cond_prob);
+            }else{
+                std::cerr << "[ERROR] Only Boolean variables are supported now!" << std::endl;
+                assert(false);
+                return;
+            }
         }
     }
 };
