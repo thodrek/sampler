@@ -92,33 +92,36 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
     double potential_pos;
     double potential_neg;
     double obs_inv_cond_prob;
+
+    // these are used for calculating potentials and probabilities
+    double denom_sum;
+
     neg_ps_ll = 0.0;
-    for (long t=0; this->p_fg->n_var; t++) {
+    for (long t=0; t < this->p_fg->n_var; t++) {
         Variable & variable = this->p_fg->variables[t];
         if (variable.is_evid) {
-            if(variable.domain_type == DTYPE_BOOLEAN){
+            if(variable.domain_type == DTYPE_BOOLEAN) {
 
                 //compute conditional probability of variable
                 potential_pos = p_fg->template potential<false>(variable, 1);
                 potential_neg = p_fg->template potential<false>(variable, 0);
 
-                if(p_fg->infrs->assignments_evid[t] == 1)
+                if (p_fg->infrs->assignments_evid[t] == 1)
                     obs_inv_cond_prob = 1.0 + exp(potential_neg - potential_pos);
                 else
                     obs_inv_cond_prob = 1.0 + exp(potential_pos - potential_neg);
 
                 neg_ps_ll += log(obs_inv_cond_prob);
+            }
+            else if(variable.domain_type == DTYPE_MULTINOMIAL){
+                for(int propose=variable.lower_bound;propose <= variable.upper_bound; propose++){
+                    denom_sum = exp(p_fg->template potential<false>(variable, propose));
+                }
+                obs_inv_cond_prob = denom_sum/exp(p_fg->template potential<false>(variable, p_fg->infrs->assignments_evid[t]));
+                neg_ps_ll += log(obs_inv_cond_prob);
+
             }else{
-                if(variable.domain_type == DTYPE_BOOLEAN){
-                    std::cerr<<"Boolean"<<std::endl;
-                }
-                else if (variable.domain_type == DTYPE_REAL){
-                    std::cerr<<"Real"<<std::endl;
-                }
-                else {
-                    std::cerr<<"Multinomial"<<std::endl;
-                }
-                std::cerr << "[ERROR] Only Boolean variables are supported now!" << std::endl;
+                std::cerr << "[ERROR] Only Boolean and Multinomial variables are supported now!" << std::endl;
                 assert(false);
                 return;
             }
