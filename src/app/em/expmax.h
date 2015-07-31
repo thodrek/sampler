@@ -3,6 +3,7 @@
 #include "io/cmd_parser.h"
 #include "dstruct/factor_graph/factor_graph.h"
 #include "app/gibbs/gibbs_sampling.h"
+#include "common.h"
 
 #ifndef _EXPMAX_H_
 #define _EXPMAX_H_
@@ -34,6 +35,9 @@ namespace dd{
         // Convergence boolean flag
         bool hasConverged;
 
+        //pseudo-loglikelihood of evidence variables
+        double neg_ps_ll_old = 0.0;
+        double neg_ps_ll;
 
         // convergence threshold
         double threshold;
@@ -91,6 +95,12 @@ namespace dd{
          * is_quiet whether to compress information display
          */
         void dump_weights(const bool is_quiet);
+
+
+        /**
+         * Compute the pseudo-log-likelihood of observed variables
+         */
+        void neg_ps_loglikelihood(const bool is_quiet);
 
     };
 }

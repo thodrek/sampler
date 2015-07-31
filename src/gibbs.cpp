@@ -256,4 +256,8 @@ void em(dd::CmdParser & cmd_parser){
         n_iter--;
     }
 
+    expMax.dump_weights(is_quiet);
+    expMax.aggregate_results_and_dump(is_quiet);
+
+
 }

@@ -3,6 +3,10 @@
 #include "dstruct/factor_graph/weight.h"
 #include "dstruct/factor_graph/inference_result.h"
 #include "common.h"
+#include "expmax.h"
+#include "../../dstruct/factor_graph/variable.h"
+#include "../../dstruct/factor_graph/factor_graph.h"
+#include "../../dstruct/factor_graph/inference_result.h"
 
 
 dd::ExpMax::ExpMax(FactorGraph * const _p_fg, CmdParser * const _p_cmd_parser, GibbsSampling * const _gibbs, double _threshold)
@@ -33,15 +37,16 @@ dd::ExpMax::ExpMax(FactorGraph * const _p_fg, CmdParser * const _p_cmd_parser, G
 void dd::ExpMax::expectation(const int &n_epoch, const bool is_quiet) {
     //perform inference using the sampler
     this->gibbs->inference(n_epoch,is_quiet);
-    aggregate_results_and_dump(is_quiet);
     sampleWorld();
+    //compute negative pseudo-likelihood of observed variables
+    neg_ps_loglikelihood(is_quiet);
+    std::cout<<"Neg. PSLL = "<<neg_ps_ll<<std::endl;
 }
 
 
 void dd::ExpMax::maximization(const int &n_epoch, const int &n_sample_per_epoch, const double &stepsize,
 const double &decay, const double reg_param, const bool is_quiet) {
     this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, is_quiet);
-    dump_weights(is_quiet);
     resetEvidence();
     checkConvergence();
 }
@@ -82,4 +87,33 @@ void dd::ExpMax::aggregate_results_and_dump(const bool is_quiet) {
 void dd::ExpMax::dump_weights(const bool is_quiet) {
     this->gibbs->dump_weights(is_quiet);
 }
+
+void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
+    double potential_pos;
+    double potential_neg;
+    double obs_inv_cond_prob;
+    neg_ps_ll = 0.0;
+    for (long t=0; this->p_fg->n_var; t++) {
+        Variable & variable = this->p_fg->variables[t];
+        if (!variable.is_evid)
+            continue;
+        if(variable.domain_type == DTYPE_BOOLEAN){
+
+            //compute conditional probability of variable
+            potential_pos = p_fg->template potential<false>(variable, 1);
+            potential_neg = p_fg->template potential<false>(variable, 0);
+
+            if(p_fg->infrs->assignments_evid[t] == 1)
+                obs_inv_cond_prob = 1.0 + exp(potential_neg - potential_pos);
+            else
+                obs_inv_cond_prob = 1.0 + exp(potential_pos - potential_neg);
+
+            neg_ps_ll += log(obs_inv_cond_prob);
+        }else{
+            std::cerr << "[ERROR] Only Boolean variables are supported now!" << std::endl;
+            assert(false);
+            return;
+        }
+    }
+};
 
