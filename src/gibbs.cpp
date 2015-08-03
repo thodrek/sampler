@@ -178,6 +178,7 @@ void em(dd::CmdParser & cmd_parser){
   int n_datacopy = cmd_parser.n_datacopy->getValue();
   double reg_param = cmd_parser.reg_param->getValue();
   bool is_quiet = cmd_parser.quiet->getValue();
+  bool check_convergence = cmd_parser.check_convergence->getValue();
   bool sample_evidence = cmd_parser.sample_evidence->getValue();
   int burn_in = cmd_parser.burn_in->getValue();
   int n_iter = cmd_parser.n_iter->getValue();
@@ -232,7 +233,7 @@ void em(dd::CmdParser & cmd_parser){
   dd::GibbsSampling gibbs(&fg, &cmd_parser, n_datacopy, sample_evidence, burn_in, learn_non_evidence);
 
   // Initialize EM instance
-  dd::ExpMax expMax(&fg, &gibbs, wl_conv, delta);
+  dd::ExpMax expMax(&fg, &gibbs, wl_conv, delta, check_convergence);
 
   /**** 1st Expectation step -- inference ****/
   // number of inference epochs

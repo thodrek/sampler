@@ -36,6 +36,7 @@ namespace dd{
         n_iter = new TCLAP::ValueArg<int>("n", "n_iter", "EM Iterations", false, 100, "int");
         wl_conv = new TCLAP::ValueArg<int>("z", "wl_conv", "Window length to compute pseudo-likelihood convergence", false, 5, "int");
         delta = new TCLAP::ValueArg<int>("x", "delta", "Covergence if pseudo-likelihood difference percentage is below 10^-<delta>", false, 2, "int");
+        check_convergence = new TCLAP::SwitchArg("", "check_convergence", "stop EM when convergence criterion is met", false);
 
         cmd->add(*fg_file);
         
@@ -65,6 +66,7 @@ namespace dd{
         cmd->add(*burn_in);
         cmd->add(*sample_evidence);
         cmd->add(*learn_non_evidence);
+        cmd->add(*check_convergence);
       }else{
         std::cout << "ERROR: UNKNOWN APP NAME " << app_name << std::endl;
         std::cout << "AVAILABLE APP {gibbs}" << app_name << std::endl;

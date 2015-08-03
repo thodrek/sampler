@@ -5,8 +5,8 @@
 #include "common.h"
 
 
-dd::ExpMax::ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta)
-: p_fg(_p_fg), gibbs(_gibbs), evid_map(new bool[_p_fg->n_var]), old_weight_values(new double[_p_fg->n_weight]), delta(_delta), wl_conv(_wl_conv) {
+dd::ExpMax::ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta, bool _check_convergence)
+: p_fg(_p_fg), gibbs(_gibbs), evid_map(new bool[_p_fg->n_var]), old_weight_values(new double[_p_fg->n_weight]), delta(_delta), wl_conv(_wl_conv), check_convergence(_check_convergence) {
 
     //Init iteration count
     iterationCount = 0;
@@ -40,7 +40,8 @@ void dd::ExpMax::expectation(const int &n_epoch, const bool is_quiet) {
     //compute negative pseudo-likelihood of observed variables
     double neg_ps_ll = neg_ps_loglikelihood();
     std::cout<<"Neg. PSLL = "<<neg_ps_ll<<std::endl;
-    update_psll_buff(neg_ps_ll);
+    if (check_convergence)
+        update_psll_buff(neg_ps_ll);
 }
 
 
@@ -49,7 +50,8 @@ const double &decay, const double reg_param, const bool is_quiet) {
     this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, is_quiet);
     resetEvidence();
     iterationCount++;
-    checkConvergence();
+    if (check_convergence)
+        checkConvergence();
 }
 
 void dd::ExpMax::checkConvergence() {

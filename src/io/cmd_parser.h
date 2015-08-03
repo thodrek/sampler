@@ -43,6 +43,7 @@ namespace dd{
     TCLAP::SwitchArg * quiet; 
     TCLAP::SwitchArg * sample_evidence;
     TCLAP::SwitchArg * learn_non_evidence;
+    TCLAP::SwitchArg * check_convergence;
 
     // EM arguments
     TCLAP::ValueArg<int> * n_iter;

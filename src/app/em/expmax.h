@@ -39,6 +39,7 @@ namespace dd{
         std::vector<double> neg_psll_buff;
         int iterationCount;
 
+        bool check_convergence;
 
 
 
@@ -49,7 +50,7 @@ namespace dd{
          * NUMA-aware Gibbs sampling.
          */
 
-        ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta);
+        ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta, bool check_convergence);
 
 
         /**
