@@ -21,8 +21,6 @@ namespace dd{
         // factor graph
         FactorGraph * const p_fg;
 
-        // command line parser
-        CmdParser * const p_cmd_parser;
 
         // local instance of NUMA-aware gibbs sampling
         GibbsSampling * const gibbs;
@@ -32,15 +30,16 @@ namespace dd{
         bool * const evid_map;
         double * const old_weight_values;
 
-        // Convergence boolean flag
+        // Convergence variables
         bool hasConverged;
+        // convergence threshold = 10^-delta
+        int delta;
+        // ps-ll moving overage window
+        int wl_conv;
+        std::vector<double> neg_psll_buff;
+        int iterationCount;
 
-        //pseudo-loglikelihood of evidence variables
-        double neg_ps_ll_old = 0.0;
-        double neg_ps_ll;
 
-        // convergence threshold
-        double threshold;
 
 
         /**
@@ -50,7 +49,7 @@ namespace dd{
          * NUMA-aware Gibbs sampling.
          */
 
-        ExpMax(FactorGraph * const _p_fg, CmdParser * const _p_cmd_parser, GibbsSampling * const _gibbs, double _threshold);
+        ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta);
 
 
         /**
@@ -65,12 +64,6 @@ namespace dd{
         void maximization(const int & n_epoch, const int & n_sample_per_epoch,
                           const double & stepsize, const double & decay, const double reg_param,
                           const bool is_quiet);
-
-
-        /**
-         * Check convergence
-         */
-        void checkConvergence();
 
         /**
         * Preprocessing before learning. Fix a possible world
@@ -98,9 +91,22 @@ namespace dd{
 
 
         /**
-         * Compute the pseudo-log-likelihood of observed variables
+         * Compute the negatibe pseudo-loglikelihood of observed variables
          */
-        void neg_ps_loglikelihood(const bool is_quiet);
+        double neg_ps_loglikelihood();
+
+
+        /**
+         * Update the negative pseudo-loglikelihood buffer
+         */
+        void update_psll_buff(double npsll);
+
+
+        /**
+         * Check convergence of EM based on past pseudo-likelihood values
+         */
+        void checkConvergence();
+
 
     };
 }

@@ -59,5 +59,16 @@ inline double logadd(double log_a, double log_b){
     
 }
 
+/**
+ * Caclulate average of array of doubles
+ */
+inline double average(double * array, int length) {
+    double sum = 0.0;
+    for (int i=0; i < length; i++) {
+        sum+=array[i];
+    }
+    return sum/length;
+}
+
 
 #endif

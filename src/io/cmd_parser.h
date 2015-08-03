@@ -46,6 +46,8 @@ namespace dd{
 
     // EM arguments
     TCLAP::ValueArg<int> * n_iter;
+    TCLAP::ValueArg<int> * wl_conv;
+    TCLAP::ValueArg<int> * delta;
 
     TCLAP::CmdLine * cmd;
 

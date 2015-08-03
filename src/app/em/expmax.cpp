@@ -5,8 +5,11 @@
 #include "common.h"
 
 
-dd::ExpMax::ExpMax(FactorGraph * const _p_fg, CmdParser * const _p_cmd_parser, GibbsSampling * const _gibbs, double _threshold)
-: p_fg(_p_fg), p_cmd_parser(_p_cmd_parser), gibbs(_gibbs), evid_map(new bool[_p_fg->n_var]), old_weight_values(new double[_p_fg->n_weight]),threshold(_threshold) {
+dd::ExpMax::ExpMax(FactorGraph * const _p_fg, GibbsSampling * const _gibbs, int _wl_conv, int _delta)
+: p_fg(_p_fg), gibbs(_gibbs), evid_map(new bool[_p_fg->n_var]), old_weight_values(new double[_p_fg->n_weight]), delta(_delta), wl_conv(_wl_conv) {
+
+    //Init iteration count
+    iterationCount = 0;
 
     //Store ids of evidence variables
     for(long t=0;t<p_fg->n_var;t++) {
@@ -35,8 +38,9 @@ void dd::ExpMax::expectation(const int &n_epoch, const bool is_quiet) {
     this->gibbs->inference(n_epoch,is_quiet);
     sampleWorld();
     //compute negative pseudo-likelihood of observed variables
-    neg_ps_loglikelihood(is_quiet);
+    double neg_ps_ll = neg_ps_loglikelihood();
     std::cout<<"Neg. PSLL = "<<neg_ps_ll<<std::endl;
+    update_psll_buff(neg_ps_ll);
 }
 
 
@@ -44,22 +48,36 @@ void dd::ExpMax::maximization(const int &n_epoch, const int &n_sample_per_epoch,
 const double &decay, const double reg_param, const bool is_quiet) {
     this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, is_quiet);
     resetEvidence();
+    iterationCount++;
     checkConvergence();
 }
 
 void dd::ExpMax::checkConvergence() {
-    double maxdiff = 0.0;
-    double tmpdiff = 0.0;
-    for(long t=0;t<p_fg->n_weight;t++){
-        tmpdiff = fabs(p_fg->infrs->weight_values[t] - old_weight_values[t]);
-        maxdiff = tmpdiff > maxdiff ? tmpdiff : maxdiff;
-        old_weight_values[t] = p_fg->infrs->weight_values[t];
-    }
-    if (maxdiff < this->threshold)
-        this->hasConverged = true;
-    else
+    if (iterationCount < 2*wl_conv)
         this->hasConverged = false;
-    std::cout<<"Difference = "<<maxdiff<<std::endl;
+    else {
+        //compute the two sliding window averages
+        double oldAvg = 0.0;
+        double newAvg = 0.0;
+
+        for (std::vector<double>::iterator it = neg_psll_buff.begin() ; it != neg_psll_buff.begin()+wl_conv; ++it) {
+            oldAvg+= *it;
+        }
+        oldAvg += oldAvg/wl_conv;
+
+        for (std::vector<double>::iterator it = neg_psll_buff.begin()+wl_conv ; it != neg_psll_buff.end(); ++it) {
+            newAvg+= *it;
+        }
+        newAvg += newAvg/wl_conv;
+        std::cout<<"Old avg = "<<oldAvg<<std::endl;
+        std::cout<<"New avg = "<<newAvg<<std::endl;
+        //check convergence
+        if (fabs(oldAvg - newAvg)/oldAvg <= pow (10.0, -1*delta))
+            this->hasConverged = true;
+        else
+            this->hasConverged = false;
+    }
+
 }
 
 
@@ -84,7 +102,7 @@ void dd::ExpMax::dump_weights(const bool is_quiet) {
     this->gibbs->dump_weights(is_quiet);
 }
 
-void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
+double dd::ExpMax::neg_ps_loglikelihood() {
     double potential_pos;
     double potential_neg;
     double obs_inv_cond_prob;
@@ -92,7 +110,7 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
     // these are used for calculating potentials and probabilities
     double denom_sum;
 
-    neg_ps_ll = 0.0;
+    double neg_ps_ll = 0.0;
     for (long t=0; t < this->p_fg->n_var; t++) {
         Variable & variable = this->p_fg->variables[t];
         if (variable.is_evid) {
@@ -119,9 +137,18 @@ void dd::ExpMax::neg_ps_loglikelihood(const bool is_quiet) {
             }else{
                 std::cerr << "[ERROR] Only Boolean and Multinomial variables are supported now!" << std::endl;
                 assert(false);
-                return;
+                return -1;
             }
         }
     }
+    return neg_ps_ll;
 };
+
+void dd::ExpMax::update_psll_buff(double npsll) {
+    //erase fist element if needed
+    if (iterationCount >= 2*wl_conv)
+        neg_psll_buff.erase(neg_psll_buff.begin());
+    //add new element
+    neg_psll_buff.push_back(npsll);
+}
 
