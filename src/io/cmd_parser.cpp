@@ -34,8 +34,8 @@ namespace dd{
 
         burn_in = new TCLAP::ValueArg<int>("", "burn_in", "Burn-in period", false, 0, "int");
         n_iter = new TCLAP::ValueArg<int>("n", "n_iter", "EM Iterations", false, 100, "int");
-        wl_conv = new TCLAP::ValueArg<int>("wl", "wl_conv", "Window length to compute pseudo-likelihood convergence", false, 5, "int");
-        delta = new TCLAP::ValueArg<int>("dl", "delta", "Covergence if pseudo-likelihood difference percentage is below 10^-<delta>", false, 2, "int");
+        wl_conv = new TCLAP::ValueArg<int>("z", "wl_conv", "Window length to compute pseudo-likelihood convergence", false, 5, "int");
+        delta = new TCLAP::ValueArg<int>("x", "delta", "Covergence if pseudo-likelihood difference percentage is below 10^-<delta>", false, 2, "int");
 
         cmd->add(*fg_file);
         
