@@ -173,20 +173,20 @@ namespace dd{
 	  const VariableIndex & vid,
 	  const VariableValue & proposal) const{
 
-      bool found = false;
+      double res = 0.0;
+      int vars = 0;
 	  /* Iterate over the factor variables */
 	  for(long i_vif=n_start_i_vif; (i_vif<n_start_i_vif+n_variables);i_vif++){
 	    const VariableInFactor & vif = vifs[i_vif];
-	    const bool satisfied = is_variable_satisfied(vif, vid, var_values, proposal);
-
+	    const bool satisfied = is_variable_satisfied(vif, vid, var_values, proposal);		
 	    if(satisfied) {
-	      if(!found) found = true;
-	      /* Early return if we find that two variables are satisfied */
-	      else return -1.0;
-	    }
+	      res += 1.0;
+            }
+	    vars += 1;
 	  }
-	  if (found) return 1.0;
-	  else return -1.0;
+	  if (res == 1.0) return 1.0;
+	  else if (res == 0.0) return -1.0*vars;
+	  else return -1.0*res;
 	}
 
 	// potential for linear expression
