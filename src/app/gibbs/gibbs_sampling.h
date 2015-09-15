@@ -58,11 +58,12 @@ namespace dd{
      * stepsize starting step size for weight update (aka learning rate)
      * decay after each epoch, the stepsize is updated as stepsize = stepsize * decay
      * reg_param regularization parameter
+     * reg1_param l1 regularization parameter
      * is_quiet whether to compress information display
      */
     void learn(const int & n_epoch, const int & n_sample_per_epoch, 
       const double & stepsize, const double & decay, const double reg_param,
-      const bool is_quiet);
+      const double reg1_param, const bool is_quiet);
 
     /**
      * Performs inference

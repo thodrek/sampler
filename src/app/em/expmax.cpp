@@ -46,8 +46,8 @@ void dd::ExpMax::expectation(const int &n_epoch, const bool is_quiet) {
 
 
 void dd::ExpMax::maximization(const int &n_epoch, const int &n_sample_per_epoch, const double &stepsize,
-const double &decay, const double reg_param, const bool is_quiet) {
-    this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, is_quiet);
+const double &decay, const double reg_param, const double reg1_param, const bool is_quiet) {
+    this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, reg1_param, is_quiet);
     resetEvidence();
     iterationCount++;
     if (check_convergence)
@@ -119,8 +119,8 @@ double dd::ExpMax::neg_ps_loglikelihood() {
             if(variable.domain_type == DTYPE_BOOLEAN) {
 
                 //compute conditional probability of variable
-                potential_pos = p_fg->template potential<false>(variable, 1);
-                potential_neg = p_fg->template potential<false>(variable, 0);
+                potential_pos = p_fg->potential<false>(variable, 1);
+                potential_neg = p_fg->potential<false>(variable, 0);
 
                 if (p_fg->infrs->assignments_evid[t] == 1)
                     obs_inv_cond_prob = 1.0 + exp(potential_neg - potential_pos);
@@ -131,9 +131,9 @@ double dd::ExpMax::neg_ps_loglikelihood() {
             }
             else if(variable.domain_type == DTYPE_MULTINOMIAL){
                 for(int propose=variable.lower_bound;propose <= variable.upper_bound; propose++){
-                    denom_sum = exp(p_fg->template potential<false>(variable, propose));
+                    denom_sum = exp(p_fg->potential<false>(variable, propose));
                 }
-                obs_inv_cond_prob = denom_sum/exp(p_fg->template potential<false>(variable, p_fg->infrs->assignments_evid[t]));
+                obs_inv_cond_prob = denom_sum/exp(p_fg->potential<false>(variable, p_fg->infrs->assignments_evid[t]));
                 neg_ps_ll += log(obs_inv_cond_prob);
 
             }else{

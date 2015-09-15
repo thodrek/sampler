@@ -94,7 +94,7 @@ void dd::GibbsSampling::inference(const int & n_epoch, const bool is_quiet){
 
 void dd::GibbsSampling::learn(const int & n_epoch, const int & n_sample_per_epoch, 
                               const double & stepsize, const double & decay, 
-                              const double reg_param, const bool is_quiet){
+                              const double reg_param, const double reg1_param, const bool is_quiet){
 
   Timer t_total;
 
@@ -156,6 +156,14 @@ void dd::GibbsSampling::learn(const int & n_epoch, const int & n_sample_per_epoc
       cfg.infrs->weight_values[j] /= nnode;
       if(cfg.infrs->weights_isfixed[j] == false){
         cfg.infrs->weight_values[j] *= (1.0/(1.0+reg_param*current_stepsize));
+	double l1delta = reg1_param * current_stepsize;
+	if (cfg.infrs->weight_values[j] > l1delta) {		
+	  cfg.infrs->weight_values[j] -= reg1_param*current_stepsize;
+	} else if (cfg.infrs->weight_values[j] < - l1delta) {
+	  cfg.infrs->weight_values[j] += reg1_param*current_stepsize;
+	} else {
+	  cfg.infrs->weight_values[j] = 0;
+	}
       }
     }
 
