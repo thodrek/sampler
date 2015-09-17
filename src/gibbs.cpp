@@ -63,6 +63,7 @@ void gibbs(dd::CmdParser & cmd_parser){
 
   int n_datacopy = cmd_parser.n_datacopy->getValue();
   double reg_param = cmd_parser.reg_param->getValue();
+  double reg1_param = cmd_parser.reg1_param->getValue();
   bool is_quiet = cmd_parser.quiet->getValue();
   bool sample_evidence = cmd_parser.sample_evidence->getValue();
   int burn_in = cmd_parser.burn_in->getValue();
@@ -92,6 +93,7 @@ void gibbs(dd::CmdParser & cmd_parser){
     std::cout << "# stepsize           : " << stepsize << std::endl;
     std::cout << "# decay              : " << decay << std::endl;
     std::cout << "# regularization     : " << reg_param << std::endl;
+    std::cout << "# l1 regularization     : " << reg1_param << std::endl;
     std::cout << "################################################" << std::endl;
     std::cout << "# IGNORE -s (n_samples/l. epoch). ALWAYS -s 1. #" << std::endl;
     std::cout << "# IGNORE -t (threads). ALWAYS USE ALL THREADS. #" << std::endl;
@@ -122,7 +124,7 @@ void gibbs(dd::CmdParser & cmd_parser){
 
   // learning
   gibbs.learn(numa_aware_n_learning_epoch, n_samples_per_learning_epoch, 
-    stepsize, decay, reg_param, is_quiet);
+    stepsize, decay, reg_param, reg1_param, is_quiet);
 
   // dump weights
   gibbs.dump_weights(is_quiet);
@@ -177,6 +179,7 @@ void em(dd::CmdParser & cmd_parser){
 
   int n_datacopy = cmd_parser.n_datacopy->getValue();
   double reg_param = cmd_parser.reg_param->getValue();
+  double reg1_param = cmd_parser.reg1_param->getValue();
   bool is_quiet = cmd_parser.quiet->getValue();
   bool check_convergence = cmd_parser.check_convergence->getValue();
   bool sample_evidence = cmd_parser.sample_evidence->getValue();
@@ -210,6 +213,7 @@ void em(dd::CmdParser & cmd_parser){
     std::cout << "# stepsize           : " << stepsize << std::endl;
     std::cout << "# decay              : " << decay << std::endl;
     std::cout << "# regularization     : " << reg_param << std::endl;
+    std::cout << "# l1 regularization     : " << reg1_param << std::endl;
     std::cout << "################################################" << std::endl;
     std::cout << "# IGNORE -s (n_samples/l. epoch). ALWAYS -s 1. #" << std::endl;
     std::cout << "# IGNORE -t (threads). ALWAYS USE ALL THREADS. #" << std::endl;
@@ -259,7 +263,7 @@ void em(dd::CmdParser & cmd_parser){
     numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
                                   (n_learning_epoch%n_numa_node==0?0:1);
     expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
-                        stepsize, decay, reg_param, is_quiet);
+                        stepsize, decay, reg_param, reg1_param, is_quiet);
 
     //Decrement iteration counter
     n_iter--;

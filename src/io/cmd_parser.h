@@ -39,6 +39,7 @@ namespace dd{
 
     TCLAP::ValueArg<int> * n_datacopy;
     TCLAP::ValueArg<double> * reg_param;
+    TCLAP::ValueArg<double> * reg1_param;
     TCLAP::ValueArg<int> * burn_in;
     TCLAP::SwitchArg * quiet; 
     TCLAP::SwitchArg * sample_evidence;
