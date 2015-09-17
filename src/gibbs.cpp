@@ -235,10 +235,17 @@ void em(dd::CmdParser & cmd_parser){
   // Initialize EM instance
   dd::ExpMax expMax(&fg, &gibbs, wl_conv, delta, check_convergence);
 
-  /**** 1st Expectation step -- inference ****/
   // number of inference epochs
   int numa_aware_n_epoch;
   int numa_aware_n_learning_epoch;
+
+  // EM init -- run Maximzation (semi-supervised learning)
+
+  // Maximization step
+  numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
+                                (n_learning_epoch%n_numa_node==0?0:1);
+  expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
+                      stepsize, decay, reg_param, is_quiet);
 
   while (!expMax.hasConverged && n_iter > 0) {
 
