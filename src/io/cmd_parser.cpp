@@ -14,7 +14,8 @@ namespace dd{
         edge_file = new TCLAP::ValueArg<std::string>("e","edges","edges file",true,"","string"); 
         weight_file = new TCLAP::ValueArg<std::string>("w","weights","weights file",true,"","string"); 
         variable_file = new TCLAP::ValueArg<std::string>("v","variables","variables file",true,"","string"); 
-        factor_file = new TCLAP::ValueArg<std::string>("f","factors","factors file",true,"","string"); 
+        factor_file = new TCLAP::ValueArg<std::string>("f","factors","factors file",true,"","string");
+	meta_file = new TCLAP::ValueArg<std::string>("","feature_meta","feature metadata file",true,"","string"); 
         output_folder = new TCLAP::ValueArg<std::string>("o","outputFile","Output Folder",true,"","string");
         
         n_learning_epoch = new TCLAP::ValueArg<int>("l","n_learning_epoch","Number of Learning Epochs",true,-1,"int");
@@ -45,6 +46,7 @@ namespace dd{
         cmd->add(*weight_file);
         cmd->add(*variable_file);
         cmd->add(*factor_file);
+        cmd->add(*meta_file);
         cmd->add(*output_folder);
 
         cmd->add(*n_learning_epoch);

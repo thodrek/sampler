@@ -25,6 +25,7 @@ namespace dd{
     TCLAP::ValueArg<std::string> * weight_file;
     TCLAP::ValueArg<std::string> * variable_file;
     TCLAP::ValueArg<std::string> * factor_file;
+    TCLAP::ValueArg<std::string> * meta_file;
     TCLAP::ValueArg<std::string> * output_folder;
 
     TCLAP::ValueArg<int> * n_learning_epoch;

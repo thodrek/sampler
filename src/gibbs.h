@@ -1,6 +1,6 @@
-
 #include <assert.h>
 #include <iostream>
+#include <fstream>
 #include <cmath>
 #include "common.h"
 #include <unistd.h>

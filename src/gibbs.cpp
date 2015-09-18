@@ -48,6 +48,13 @@ void gibbs(dd::CmdParser & cmd_parser){
   std::string variable_file = cmd_parser.variable_file->getValue();
   std::string factor_file = cmd_parser.factor_file->getValue();
   std::string edge_file = cmd_parser.edge_file->getValue();
+  std::string meta_file = cmd_parser.meta_file->getValue();
+
+  std::ifstream infile (meta_file);
+  if (!infile.good()) {
+     std::cout<<meta_file<<std::endl;
+     exit(-1);
+  };
 
   std::string output_folder = cmd_parser.output_folder->getValue();
 
@@ -86,6 +93,7 @@ void gibbs(dd::CmdParser & cmd_parser){
     std::cout << "# weight_file        : " << weight_file << std::endl;
     std::cout << "# variable_file      : " << variable_file << std::endl;
     std::cout << "# factor_file        : " << factor_file << std::endl;
+    std::cout << "# meta_file          : " << meta_file << std::endl;
     std::cout << "# output_folder      : " << output_folder << std::endl;
     std::cout << "# n_learning_epoch   : " << n_learning_epoch << std::endl;
     std::cout << "# n_samples/l. epoch : " << n_samples_per_learning_epoch << std::endl;
@@ -164,6 +172,7 @@ void em(dd::CmdParser & cmd_parser){
   std::string variable_file = cmd_parser.variable_file->getValue();
   std::string factor_file = cmd_parser.factor_file->getValue();
   std::string edge_file = cmd_parser.edge_file->getValue();
+  std::string meta_file = cmd_parser.meta_file->getValue();
 
   std::string output_folder = cmd_parser.output_folder->getValue();
 
@@ -206,6 +215,7 @@ void em(dd::CmdParser & cmd_parser){
     std::cout << "# weight_file        : " << weight_file << std::endl;
     std::cout << "# variable_file      : " << variable_file << std::endl;
     std::cout << "# factor_file        : " << factor_file << std::endl;
+    std::cout << "# meta_file          : " << meta_file << std::endl;
     std::cout << "# output_folder      : " << output_folder << std::endl;
     std::cout << "# n_learning_epoch   : " << n_learning_epoch << std::endl;
     std::cout << "# n_samples/l. epoch : " << n_samples_per_learning_epoch << std::endl;
