@@ -50,12 +50,6 @@ void gibbs(dd::CmdParser & cmd_parser){
   std::string edge_file = cmd_parser.edge_file->getValue();
   std::string meta_file = cmd_parser.meta_file->getValue();
 
-  std::ifstream infile (meta_file);
-  if (!infile.good()) {
-     std::cout<<meta_file<<std::endl;
-     exit(-1);
-  };
-
   std::string output_folder = cmd_parser.output_folder->getValue();
 
   int n_learning_epoch = cmd_parser.n_learning_epoch->getValue();
