@@ -1,6 +1,8 @@
 
 #include "gibbs.h"
 #include "dstruct/factor_graph/inference_result.h"
+#include <iostream>
+#include <fstream>
 
 /*
  * Parse input arguments
@@ -50,6 +52,15 @@ void gibbs(dd::CmdParser & cmd_parser){
   std::string edge_file = cmd_parser.edge_file->getValue();
   std::string meta_file = cmd_parser.meta_file->getValue();
 
+  std::cout<<"Opening file "<<meta_file<<std::endl;
+  std::ifstream myfile;
+  std::string data;
+  myfile.open (meta_file);
+  while ( std::getline(myfile,data))
+    {
+      std::cout << data <<std::endl;
+    }
+    myfile.close();
   std::string output_folder = cmd_parser.output_folder->getValue();
 
   int n_learning_epoch = cmd_parser.n_learning_epoch->getValue();
