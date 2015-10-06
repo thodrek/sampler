@@ -52,15 +52,6 @@ void gibbs(dd::CmdParser & cmd_parser){
   std::string edge_file = cmd_parser.edge_file->getValue();
   std::string meta_file = cmd_parser.meta_file->getValue();
 
-  std::cout<<"Opening file "<<meta_file<<std::endl;
-  std::ifstream myfile;
-  std::string data;
-  myfile.open (meta_file);
-  while ( std::getline(myfile,data))
-    {
-      std::cout << data <<std::endl;
-    }
-    myfile.close();
   std::string output_folder = cmd_parser.output_folder->getValue();
 
   int n_learning_epoch = cmd_parser.n_learning_epoch->getValue();
@@ -137,7 +128,7 @@ void gibbs(dd::CmdParser & cmd_parser){
 
   // learning
   gibbs.learn(numa_aware_n_learning_epoch, n_samples_per_learning_epoch, 
-    stepsize, decay, reg_param, reg1_param, is_quiet);
+    stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
 
   // dump weights
   gibbs.dump_weights(is_quiet);
@@ -264,7 +255,7 @@ void em(dd::CmdParser & cmd_parser){
   numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
                                 (n_learning_epoch%n_numa_node==0?0:1);
   expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
-                      stepsize, decay, reg_param, reg1_param, is_quiet);
+                      stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
 
   while (!expMax.hasConverged && n_iter > 0) {
 
@@ -278,7 +269,7 @@ void em(dd::CmdParser & cmd_parser){
     numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
                                   (n_learning_epoch%n_numa_node==0?0:1);
     expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
-                        stepsize, decay, reg_param, reg1_param, is_quiet);
+                        stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
 
     //Decrement iteration counter
     n_iter--;
