@@ -127,8 +127,10 @@ void gibbs(dd::CmdParser & cmd_parser){
                             (n_learning_epoch%n_numa_node==0?0:1);
 
   // learning
-  gibbs.learn(numa_aware_n_learning_epoch, n_samples_per_learning_epoch, 
-    stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
+  /*gibbs.learn(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
+    stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);*/
+  gibbs.learn(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
+              stepsize, decay, reg_param, reg1_param, is_quiet);
 
   // dump weights
   gibbs.dump_weights(is_quiet);
@@ -255,7 +257,9 @@ void em(dd::CmdParser & cmd_parser){
   numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
                                 (n_learning_epoch%n_numa_node==0?0:1);
   expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
-                      stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
+                      stepsize, decay, reg_param, reg1_param, is_quiet);
+  /*expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
+                      stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);*/
 
   while (!expMax.hasConverged && n_iter > 0) {
 
@@ -268,8 +272,10 @@ void em(dd::CmdParser & cmd_parser){
     // Maximization step
     numa_aware_n_learning_epoch = (int)(n_learning_epoch/n_numa_node) +
                                   (n_learning_epoch%n_numa_node==0?0:1);
+    /*expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
+                        stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);*/
     expMax.maximization(numa_aware_n_learning_epoch, n_samples_per_learning_epoch,
-                        stepsize, decay, reg_param, reg1_param, meta_file, is_quiet);
+                        stepsize, decay, reg_param, reg1_param, is_quiet);
 
     //Decrement iteration counter
     n_iter--;

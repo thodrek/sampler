@@ -46,8 +46,10 @@ void dd::ExpMax::expectation(const int &n_epoch, const bool is_quiet) {
 
 
 void dd::ExpMax::maximization(const int &n_epoch, const int &n_sample_per_epoch, const double &stepsize,
-const double &decay, const double reg_param, const double reg1_param, const std::string meta_file, const bool is_quiet) {
-    this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, reg1_param, meta_file, is_quiet);
+const double &decay, const double reg_param, const double reg1_param, const bool is_quiet) {
+//const double &decay, const double reg_param, const double reg1_param, const std::string meta_file, const bool is_quiet) {
+    //this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, reg1_param, meta_file, is_quiet);
+    this->gibbs->learn(n_epoch, n_sample_per_epoch, stepsize,decay, reg_param, reg1_param, is_quiet);
     resetEvidence();
     iterationCount++;
     if (check_convergence)

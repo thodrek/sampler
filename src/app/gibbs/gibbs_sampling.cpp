@@ -4,10 +4,10 @@
 #include "common.h"
 #include <unistd.h>
 #include <fstream>
-#include <sstream>
+//#include <sstream>
 #include <memory>
 #include "timer.h"
-#include <map>
+//#include <map>
 
 dd::GibbsSampling::GibbsSampling(FactorGraph * const _p_fg, 
   CmdParser * const _p_cmd_parser, int n_datacopy, bool sample_evidence,
@@ -96,8 +96,9 @@ void dd::GibbsSampling::inference(const int & n_epoch, const bool is_quiet){
 
 void dd::GibbsSampling::learn(const int & n_epoch, const int & n_sample_per_epoch, 
                               const double & stepsize, const double & decay, 
-                              const double reg_param, const double reg1_param, 
-			      const std::string meta_file, const bool is_quiet){
+                              const double reg_param, const double reg1_param,
+                              const bool is_quiet){
+			      //const std::string meta_file, const bool is_quiet){
 
   Timer t_total;
 
@@ -108,49 +109,49 @@ void dd::GibbsSampling::learn(const int & n_epoch, const int & n_sample_per_epoc
   int nnode = n_numa_nodes + 1;
   int nweight = this->factorgraphs[0].n_weight;
 
-  int num_sources_per_var[nvar];
-  for (int i = 0; i < nvar; i++) {
-    num_sources_per_var[i] = 1;
-  }
-  std::string full_feature_names[nvar];
-  int feature_values[nvar];
-  std::map<std::string, int*> feature_var_map;
-  std::map<std::string,int*>::iterator it;
-  int num_feature_names = 0;
-  
-  std::cout<<"Opening file "<<meta_file<<std::endl;
-  std::ifstream myfile;
-  std::string data;
-  myfile.open (meta_file);
-  if (myfile.good()) {
-    while ( std::getline(myfile,data)) {
-      istringstream iss(data);
-      std::string temp;
-      std::getline(iss, temp, '\t');
-      int feature_id = std::stoi(temp, nullptr);
-      std::string table_name;
-      std::getline(iss, table_name, '\t');
-      std::string feature_data;
-      std::getline(iss, feature_data);
-      feature_data = feature_data.substr(1, feature_data.length() - 2);
-      temp = feature_data.substr(14 + feature_data.find("source_count\":"), feature_data.find(",feature_name") - feature_data.find("source_count\":") - 14 );
-      num_sources_per_var[feature_id] = std::stoi(temp, nullptr);
-      temp = feature_data.substr(13 + feature_data.find("feature_name:"), feature_data.find(",feature_value") - feature_data.find("feature_name:") - 13 );
-      full_feature_names[feature_id] = table_name + "." + temp;
-      temp = feature_data.substr(14 + feature_data.find("feature_value:"), feature_data.find("}") - feature_data.find("feature_value:") - 14 );
-      feature_values[feature_id] = (int)std::stod(temp, nullptr);
-      it = feature_var_map.find(full_feature_names[feature_id]);
-      if (it != feature_var_map.end()) {
-        int* arr = it;
-        arr[feature_values[feature_id]] = feature_id;
-      } else {
-        feature_var_map[full_feature_names[feature_id]] = new int[10]; // NOTE: Hardcoded, change later.
-      }
-      feature_var_map[full_feature_names[feature_id]] = ;
-      std::cout << feature_id << " -- " << table_name << " - " << full_feature_names[feature_id] << " ;; " << feature_values[feature_id] << " ,, " << num_sources_per_var[feature_id] << std::endl;
-    }
-  }
-  myfile.close();
+//  int num_sources_per_var[nvar];
+//  for (int i = 0; i < nvar; i++) {
+//    num_sources_per_var[i] = 1;
+//  }
+//  std::string full_feature_names[nvar];
+//  int feature_values[nvar];
+//  std::map<std::string, int*> feature_var_map;
+//  std::map<std::string,int*>::iterator it;
+//  int num_feature_names = 0;
+//
+//  std::cout<<"Opening file "<<meta_file<<std::endl;
+//  std::ifstream myfile;
+//  std::string data;
+//  myfile.open (meta_file);
+//  if (myfile.good()) {
+//    while ( std::getline(myfile,data)) {
+//      istringstream iss(data);
+//      std::string temp;
+//      std::getline(iss, temp, '\t');
+//      int feature_id = std::stoi(temp, nullptr);
+//      std::string table_name;
+//      std::getline(iss, table_name, '\t');
+//      std::string feature_data;
+//      std::getline(iss, feature_data);
+//      feature_data = feature_data.substr(1, feature_data.length() - 2);
+//      temp = feature_data.substr(14 + feature_data.find("source_count\":"), feature_data.find(",feature_name") - feature_data.find("source_count\":") - 14 );
+//      num_sources_per_var[feature_id] = std::stoi(temp, nullptr);
+//      temp = feature_data.substr(13 + feature_data.find("feature_name:"), feature_data.find(",feature_value") - feature_data.find("feature_name:") - 13 );
+//      full_feature_names[feature_id] = table_name + "." + temp;
+//      temp = feature_data.substr(14 + feature_data.find("feature_value:"), feature_data.find("}") - feature_data.find("feature_value:") - 14 );
+//      feature_values[feature_id] = (int)std::stod(temp, nullptr);
+//      it = feature_var_map.find(full_feature_names[feature_id]);
+//      if (it != feature_var_map.end()) {
+//        int* arr = it;
+//        arr[feature_values[feature_id]] = feature_id;
+//      } else {
+//        feature_var_map[full_feature_names[feature_id]] = new int[10]; // NOTE: Hardcoded, change later.
+//      }
+//      feature_var_map[full_feature_names[feature_id]] = ;
+//      std::cout << feature_id << " -- " << table_name << " - " << full_feature_names[feature_id] << " ;; " << feature_values[feature_id] << " ,, " << num_sources_per_var[feature_id] << std::endl;
+//    }
+//  }
+//  myfile.close();
   
   
   // single node samplers

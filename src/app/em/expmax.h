@@ -64,7 +64,8 @@ namespace dd{
          */
         void maximization(const int & n_epoch, const int & n_sample_per_epoch,
                           const double & stepsize, const double & decay, const double reg_param,
-                          const double reg1_param, const std::string meta_file, const bool is_quiet);
+                          const double reg1_param, const bool is_quiet);
+//                          const double reg1_param, const std::string meta_file, const bool is_quiet);
 
         /**
         * Preprocessing before learning. Fix a possible world
