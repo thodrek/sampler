@@ -103,40 +103,42 @@ long long read_variables(string filename, dd::FactorGraph &fg)
         cardinality = bswap_64(cardinality);
         count++;
 
+        bool is_observation = (isevidence == 2);
+
         // add to factor graph
         if (type == 0){ // boolean
             if (isevidence) {
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_BOOLEAN, true, 0, 1, 
-                    initial_value, initial_value, edge_count);
+                    initial_value, initial_value, edge_count, is_observation);
                 fg.c_nvar++;
                 fg.n_evid++;
             } else {
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_BOOLEAN, false, 0, 1, 
-                    0, 0, edge_count);
+                    0, 0, edge_count, is_observation);
                 fg.c_nvar++;
                 fg.n_query++;
             }
         } else if (type == 1) { // multinomial
             if (isevidence) {
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_MULTINOMIAL, true, 0, 
-                    cardinality-1, initial_value, initial_value, edge_count);
+                    cardinality-1, initial_value, initial_value, edge_count, is_observation);
                 fg.c_nvar ++;
                 fg.n_evid ++;
             } else {
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_MULTINOMIAL, false, 0, 
-                    cardinality-1, 0, 0, edge_count);
+                    cardinality-1, 0, 0, edge_count, is_observation);
                 fg.c_nvar ++;
                 fg.n_query ++;
             }
         } else if (type == 3){
             if (isevidence) {
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_REAL, true, 0, cardinality, 
-                    initial_value, initial_value, edge_count);
+                    initial_value, initial_value, edge_count, is_observation);
                 fg.c_nvar++;
                 fg.n_evid++;
             }else{
                 fg.variables[fg.c_nvar] = dd::Variable(id, DTYPE_REAL, true, 0, cardinality, 
-                    initial_value, initial_value, edge_count);
+                    initial_value, initial_value, edge_count, is_observation);
                 fg.c_nvar++;
                 fg.n_evid++;
             }
